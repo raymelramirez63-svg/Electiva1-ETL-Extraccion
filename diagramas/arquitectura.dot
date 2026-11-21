@@ -1,0 +1,33 @@
+digraph arquitectura {
+  graph [rankdir=LR, bgcolor="#ffffff", pad=0.38, nodesep=0.35, ranksep=0.8, fontname="DejaVu Sans", labelloc=t,
+    label="Arquitectura de extracción ETL | Análisis de Opiniones", fontsize=22, fontcolor="#17324d"];
+  node [shape=box, style="rounded,filled", fontname="DejaVu Sans", fontsize=12, penwidth=1.1,
+    fillcolor="#f5f8fc", color="#d0dce8", fontcolor="#17324d", margin="0.22,0.15"];
+  edge [color="#829eb7", penwidth=1.6, arrowsize=0.7];
+
+  subgraph cluster_origen {
+    label="Fuentes de información"; style="rounded,filled"; color="#c7dcf0"; fillcolor="#f0f7ff";
+    csv [label="Archivos CSV\nEncuestas · Clientes\nProductos · Fuentes", fillcolor="#dcecff"];
+    sql [label="SQL Server\nOpinionesFuentesDB\ndbo.WebReviews", fillcolor="#dcecff"];
+    api [label="API REST local\nGET /api/comments\nComentarios sociales", fillcolor="#dcecff"];
+  }
+  subgraph cluster_worker {
+    label="Worker Service · C# / .NET 8"; style="rounded,filled"; color="#b7d4e7"; fillcolor="#f4fbff";
+    orchestrator [label="BackgroundService\nOrquestación + concurrencia", fillcolor="#bce7fb"];
+    csvex [label="CsvExtractor\nCsvHelper"];
+    dbex [label="DatabaseExtractor\nSqlClient / async"];
+    apiex [label="ApiExtractor\nIHttpClientFactory"];
+    writer [label="StagingFileFactory\nJSON Lines · .tmp → .jsonl", fillcolor="#a5e9db"];
+    logs [label="ILogger + Stopwatch\nErrores, conteos y tiempos", fillcolor="#fff0c2"];
+  }
+  staging [label="Staging temporal\n6 archivos .jsonl", fillcolor="#d9f7e7", color="#71c99f"];
+  analytics [label="Base analítica\n(Fase futura: T + L)", style="rounded,filled,dashed", fillcolor="#f4f4f6", color="#a7aab1", fontcolor="#6b7280"];
+  dash [label="Dashboard / BI\n(Fase futura)", style="rounded,filled,dashed", fillcolor="#f4f4f6", color="#a7aab1", fontcolor="#6b7280"];
+  csv -> csvex; sql -> dbex; api -> apiex;
+  orchestrator -> csvex [dir=both]; orchestrator -> dbex [dir=both]; orchestrator -> apiex [dir=both];
+  csvex -> writer; dbex -> writer; apiex -> writer;
+  orchestrator -> logs [style=dashed, color="#d7ac4c"];
+  writer -> staging;
+  staging -> analytics [style=dashed, color="#a7aab1", label="posterior"];
+  analytics -> dash [style=dashed, color="#a7aab1"];
+}

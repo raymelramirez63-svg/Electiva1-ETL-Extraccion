@@ -1,0 +1,11 @@
+OK CSV surveys_part1.csv: 500 filas
+OK CSV clients.csv: 500 filas
+OK CSV products.csv: 200 filas
+OK CSV fuente_datos.csv: 100 filas
+OK CSV web_reviews.csv: 200 filas
+OK CSV social_comments.csv: 200 filas
+OK XML src/OpinionesETL.MockApi/OpinionesETL.MockApi.csproj
+OK XML src/OpinionesETL.Worker/OpinionesETL.Worker.csproj
+OK XML src/OpinionesETL.Seeder/OpinionesETL.Seeder.csproj
+Validación estática completada. Total de filas fuente: 1700
+NO valida compilación ni ejecución integrada: requiere SDK .NET 8 y SQL Server.

@@ -1,0 +1,26 @@
+digraph proceso {
+  graph [rankdir=TB, bgcolor="#ffffff", pad=0.28, nodesep=0.3, ranksep=0.44, fontname="DejaVu Sans",
+    labelloc=t, label="Diagrama de flujo | Fase E (Extracción)", fontsize=21, fontcolor="#17324d"];
+  node [shape=box, style="rounded,filled", fontname="DejaVu Sans", fontsize=11,
+    color="#c6d7e5", fillcolor="#f6faff", fontcolor="#17324d", margin="0.18,0.12"];
+  edge [color="#829eb7", penwidth=1.3, arrowsize=0.7];
+  start [label="Inicio · Worker Service (.NET 8)", shape=oval, fillcolor="#bce7fb"];
+  config [label="Leer appsettings.json\ny variable de conexión SQL"];
+  concurrently [label="Ejecutar tareas asíncronas\n(hasta 3 extractores concurrentes)", fillcolor="#d8eefc"];
+  csv [label="CSV · 4 archivos\nCsvHelper · lectura en streaming"];
+  db [label="SQL · dbo.WebReviews\nSqlDataReader.ReadAsync"];
+  api [label="API REST · GET paginado\nHttpClient · JSON"];
+  tmp [label="Escribir registros fuente a fuente\nen archivos .tmp (JSONL)", fillcolor="#fef3c7"];
+  finish [label="Confirmar cada archivo\n.tmp → .jsonl (staging)", fillcolor="#c9f7e5"];
+  ok [label="ILogger + Stopwatch\nConteos, tiempos y resultado"];
+  end [label="Fin de la extracción E", shape=oval, fillcolor="#bce7fb"];
+  error [label="Error: registrar detalle con ILogger\nEliminar .tmp incompleto\nIndicar fallo de ejecución", fillcolor="#fee2e2", color="#fca5a5"];
+
+  start -> config -> concurrently;
+  concurrently -> csv; concurrently -> db; concurrently -> api;
+  csv -> tmp; db -> tmp; api -> tmp;
+  csv -> error [style=dashed, color="#ee9999"];
+  db -> error [style=dashed, color="#ee9999"];
+  api -> error [style=dashed, color="#ee9999"];
+  tmp -> finish -> ok -> end;
+}

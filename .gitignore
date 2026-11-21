@@ -1,0 +1,9 @@
+**/bin/
+**/obj/
+**/.vs/
+**/Staging/
+**/appsettings.Development.json
+**/*.user
+*.log
+.env
+secrets.json
