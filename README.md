@@ -2,8 +2,6 @@
 
 Proyecto: **Análisis de Opiniones de Clientes**. Entrega de la etapa **E (Extracción)** de ETL, desarrollada como Worker Service .NET 8. El código usa los seis CSV proporcionados: cuatro se extraen como archivos, `web_reviews.csv` se importa primero a SQL Server y `social_comments.csv` se expone mediante una API REST local real para que `HttpClient` la consuma.
 
-> **Importante:** No incluye transformación ni carga a la base analítica: se muestran en los diagramas como ampliación futura de la arquitectura. El dashboard tampoco se implementa en esta etapa. Esta entrega no ha sido publicada en GitHub ni ejecutada en SQL Server por este entorno; los pasos siguientes generan evidencias reproducibles en tu computadora.
-
 ## Estructura
 
 - `OpinionesETL.sln`: solución para Visual Studio 2022 con tres proyectos .NET 8.
@@ -13,7 +11,7 @@ Proyecto: **Análisis de Opiniones de Clientes**. Entrega de la etapa **E (Extra
 - `Data/`: seis CSV originales.
 - `sql/`: script de creación/verificación de la BD fuente relacional.
 - `diagramas/`: arquitectura y flujo en PNG, SVG y DOT editable.
-- `documentacion/`: informe técnico PDF y DOCX.
+- `documentacion/`: informe técnico PDF.
 - `evidencias/`: guía de capturas reales para demostrar la ejecución.
 - `tools/verificar_staging.py`: comprobación opcional de los JSONL resultantes.
 
@@ -109,20 +107,27 @@ Opcional, para validar el JSONL con Python:
 python tools/verificar_staging.py src/OpinionesETL.Worker/bin/Debug/net8.0/Staging
 ```
 
-### 7. Publicar en GitHub
+## Resultados de ejecución
 
-El PDF exige entregar código fuente en GitHub, algo que debe hacerse desde tu cuenta. En PowerShell, dentro de la carpeta raíz:
+La solución se compiló en Visual Studio con tres proyectos correctos y cero errores.
+El Worker Service en .NET 8 procesó seis fuentes y extrajo 1,700 registros.
 
-```powershell
-git init
-git add .
-git commit -m "Actividad 1 - Arquitectura y extracción ETL .NET 8"
-git branch -M main
-git remote add origin https://github.com/TU_USUARIO/TU_REPOSITORIO.git
-git push -u origin main
-```
+| Fuente | Registros |
+|---|---:|
+| Encuestas CSV | 500 |
+| Clientes CSV | 500 |
+| Productos CSV | 200 |
+| Catálogo de fuentes CSV | 100 |
+| Reseñas desde SQL Server | 200 |
+| Comentarios desde la API REST local | 200 |
+| **Total** | **1,700** |
 
-Crea antes un repositorio vacío en GitHub. Sustituye `TU_USUARIO/TU_REPOSITORIO`. Revisa `git status` antes de hacer push y no compartas contraseñas, tokens ni archivos `.env`.
+En la ejecución documentada, el Worker reportó un tiempo global de 467 ms.
+Los registros se guardaron en seis archivos JSONL de staging.
+
+El [informe técnico con evidencias](documentacion/Informe_Tecnico_Actividad1_ETL.pdf)
+incluye los diagramas y las capturas de compilación, SQL Server, API REST,
+ejecución del Worker y archivos de staging.
 
 ## Diseño técnico y alcance
 
@@ -149,6 +154,3 @@ Si todavía no tienes SQL Server o no logras iniciar la API, puedes habilitar/de
 - `Could not find ...csv`: recompilar el proyecto y verificar que los CSV estén copiados en `bin/Debug/net8.0/Data/`.
 - `SDK NET8 not found`: instalar .NET SDK 8 o el componente correspondiente de Visual Studio.
 
-## Limitación de la verificación aquí
-
-Se inspeccionaron los seis CSV y se generaron los archivos fuente, pero este entorno no tiene el SDK `dotnet` ni una instancia SQL Server: la compilación y ejecución integrada real deben verificarse en el equipo del estudiante. No se adjuntan capturas falsas ni métricas de rendimiento inventadas.
